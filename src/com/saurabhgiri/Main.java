@@ -10,7 +10,7 @@ public class Main {
     public static final int SEASON = 1;
     public static final int VENUE = 14;
     public static final int WINNER = 10;
-    public static final int MATCH_ID_FROM_DELIVERIES = 0;
+    public static final int MATCH_ID_FROM_DELIVERYDATA = 0;
     public static final int BATTINGTEAM = 2;
     public static final int BOWLER = 8;
     public static final int EXTRA_RUN = 16;
@@ -62,7 +62,7 @@ public class Main {
             while ((line = reader.readLine()) != null) {
                 String[] lineData = line.split("," , -1);
                 Delivery delivery = new Delivery();
-                delivery.setMatchId(lineData[MATCH_ID_FROM_DELIVERIES]);
+                delivery.setMatchId(lineData[MATCH_ID_FROM_DELIVERYDATA]);
                 delivery.setBattingTeam(lineData[BATTINGTEAM]);
                 delivery.setBowler(lineData[BOWLER]);
                 delivery.setExtraRun(lineData[EXTRA_RUN]);

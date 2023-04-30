@@ -20,8 +20,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ArrayList<Match> matchesData = readCsvMatchFile("/home/saurabh/Project_IPL/Ipl_project_MB_Saurabh/sources/matches.csv");
-        ArrayList<Delivery>  deliveriesData = readCsvDeliveriesFile("/home/saurabh/Project_IPL/Ipl_project_MB_Saurabh/sources/deliveries.csv");
+        ArrayList<Match> matchesData = readCsvMatchFile("/home/saurabhgiri/Project_Mountblue/ipl_project_saurabh/sources/matches.csv");
+        ArrayList<Delivery>  deliveriesData = readCsvDeliveriesFile("/home/saurabhgiri/Project_Mountblue/ipl_project_saurabh/sources/deliveries.csv");
 
         noOfMatchsPlayedEachYear(matchesData);
         noOfMatchesWonAllTeamOverAllYear(matchesData);

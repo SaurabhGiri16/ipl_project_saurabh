@@ -1,12 +1,12 @@
 package com.saurabhgiri;
 
 public class Match {
-    private String match_Id_From_Match, season , winner , venue;
+    private String matchIdFromMatch, season , winner , venue;
     public String getMatchIdFromMatch() {
-        return match_Id_From_Match;
+        return matchIdFromMatch;
     }
     public void setMatchIdFromMatch(String matchId) {
-        this.match_Id_From_Match = matchId;
+        this.matchIdFromMatch = matchId;
     }
     public String getSeason() {
         return season;

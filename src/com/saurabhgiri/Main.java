@@ -11,7 +11,7 @@ public class Main {
     public static final int VENUE = 14;
     public static final int WINNER = 10;
     public static final int MATCH_ID_FROM_DELIVERYDATA = 0;
-    public static final int BATTINGTEAM = 2;
+    public static final int BATTING_TEAM = 2;
     public static final int BOWLER = 8;
     public static final int EXTRA_RUN = 16;
     public static final int TOTAL_RUN = 17;
@@ -20,14 +20,14 @@ public class Main {
     public static void main(String[] args) {
 
         ArrayList<Match> matchesData = readCsvMatchFile("/home/saurabhgiri/Project_Mountblue/ipl_project_saurabh/sources/matches.csv");
-        ArrayList<Delivery>  deliveriesData = readCsvDeliveriesFile("/home/saurabhgiri/Project_Mountblue/ipl_project_saurabh/sources/deliveries.csv");
+        ArrayList<Delivery>  deliveriesData = readCsvDeliveryFile("/home/saurabhgiri/Project_Mountblue/ipl_project_saurabh/sources/deliveries.csv");
 
         noOfMatchsPlayedEachYear(matchesData);
-        noOfMatchesWonAllTeamOverAllYear(matchesData);
+        noOfMatchesWonByAllTeamOverAllYear(matchesData);
         extraRunConductedPerTeamIn2016(matchesData, deliveriesData);
         bestEconomyBowlerIn2015(matchesData , deliveriesData);
         matchInEveryVenue(matchesData);
-        playerWhoCatchesMostin2016(matchesData , deliveriesData); // review_question 
+        playerWhoCatchesMostIn2016(matchesData , deliveriesData); // review_question
     }
 
     public static ArrayList<Match> readCsvMatchFile(String path) {
@@ -54,8 +54,8 @@ public class Main {
         return null;
     }
 
-    public static ArrayList<Delivery> readCsvDeliveriesFile(String path) {
-        ArrayList<Delivery> rowLinesOfFile = new ArrayList<>();
+    public static ArrayList<Delivery> readCsvDeliveryFile(String path) {
+        ArrayList<Delivery> rowLineOfFile = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(new File(path)));
             String line = "";
@@ -63,15 +63,15 @@ public class Main {
                 String[] lineData = line.split("," , -1);
                 Delivery delivery = new Delivery();
                 delivery.setMatchId(lineData[MATCH_ID_FROM_DELIVERYDATA]);
-                delivery.setBattingTeam(lineData[BATTINGTEAM]);
+                delivery.setBattingTeam(lineData[BATTING_TEAM]);
                 delivery.setBowler(lineData[BOWLER]);
                 delivery.setExtraRun(lineData[EXTRA_RUN]);
                 delivery.setTotalRun(lineData[TOTAL_RUN]);
                 delivery.setFielder(lineData[FIELDER]);
 
-                rowLinesOfFile.add(delivery);
+                rowLineOfFile.add(delivery);
             }
-            return rowLinesOfFile;
+            return rowLineOfFile;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -90,7 +90,7 @@ public class Main {
         }
     }
 
-    public static void noOfMatchesWonAllTeamOverAllYear(ArrayList<Match> matchListData) {
+    public static void noOfMatchesWonByAllTeamOverAllYear(ArrayList<Match> matchListData) {
         HashMap<String, Integer> noOfMatchesWinningAllTeam = new HashMap();
         for (int i = 1; i < matchListData.size(); i++) {
             noOfMatchesWinningAllTeam.put(matchListData.get(i).getWinner(), noOfMatchesWinningAllTeam.getOrDefault(matchListData.get(i).getWinner(), 0) + 1);
@@ -159,7 +159,7 @@ public class Main {
         System.out.println(minEconomyPlayer + " - " + minEconomy);
     }
 
-    public static void playerWhoCatchesMostin2016(ArrayList<Match> matchDataFile , ArrayList<Delivery> deliveriesDtatFile){
+    public static void playerWhoCatchesMostIn2016(ArrayList<Match> matchDataFile , ArrayList<Delivery> deliveriesDtatFile){
         HashMap<String , Integer> catchPerPlayer = new HashMap<>();
         for(int i =0 ; i<matchDataFile.size(); i++){
             if(matchDataFile.get(i).getSeason().equals("2016")){

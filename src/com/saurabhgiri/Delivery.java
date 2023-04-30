@@ -1,7 +1,7 @@
 package com.saurabhgiri;
 
 public class Delivery {
-    private String matchIdFromDeliveries , battingTeam , bowler , extraRun , totalRun , fielder;
+    private String match_Id_From_Delivery, batting_Team, bowler , extraRun , totalRun , fielder;
 
     public String getFielder() {
         return fielder;
@@ -12,16 +12,16 @@ public class Delivery {
     }
 
     public String getMatchId() {
-        return matchIdFromDeliveries;
+        return match_Id_From_Delivery;
     }
     public void setMatchId(String matchId) {
-        this.matchIdFromDeliveries = matchId;
+        this.match_Id_From_Delivery = matchId;
     }
     public String getBattingTeam() {
-        return battingTeam;
+        return batting_Team;
     }
     public void setBattingTeam(String battingTeam) {
-        this.battingTeam = battingTeam;
+        this.batting_Team = battingTeam;
     }
     public String getBowler() {
         return bowler;

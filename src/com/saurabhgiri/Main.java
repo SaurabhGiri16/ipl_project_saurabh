@@ -2,7 +2,6 @@ package com.saurabhgiri;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +10,7 @@ public class Main {
     public static final int SEASON = 1;
     public static final int VENUE = 14;
     public static final int WINNER = 10;
-    public static final int SETIDINDELIVERIES = 0;
+    public static final int MATCH_ID_FROM_DELIVERIES = 0;
     public static final int BATTINGTEAM = 2;
     public static final int BOWLER = 8;
     public static final int EXTRA_RUN = 16;
@@ -63,7 +62,7 @@ public class Main {
             while ((line = reader.readLine()) != null) {
                 String[] lineData = line.split("," , -1);
                 Delivery delivery = new Delivery();
-                delivery.setMatchId(lineData[SETIDINDELIVERIES]);
+                delivery.setMatchId(lineData[MATCH_ID_FROM_DELIVERIES]);
                 delivery.setBattingTeam(lineData[BATTINGTEAM]);
                 delivery.setBowler(lineData[BOWLER]);
                 delivery.setExtraRun(lineData[EXTRA_RUN]);

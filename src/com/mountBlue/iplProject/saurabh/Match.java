@@ -1,4 +1,4 @@
-package com.saurabhgiri;
+package com.mountBlue.iplProject.saurabh;
 
 public class Match {
     private String matchIdFromMatch, season , winner , venue;

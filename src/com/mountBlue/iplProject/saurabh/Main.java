@@ -1,6 +1,7 @@
 package com.mountBlue.iplProject.saurabh;
 
 import java.io.*;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -19,10 +20,15 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ArrayList<Match> matchesData = readCsvMatchFile("/home/saurabhgiri/Project_Mountblue/ipl_project_saurabh/sources/matches.csv");
-        ArrayList<Delivery> deliveriesData = readCsvDeliveryFile("/home/saurabhgiri/Project_Mountblue/ipl_project_saurabh/sources/deliveries.csv");
+        ArrayList<Match> matchesData;
+        ArrayList<Delivery> deliveriesData;
+       // matchesData = readCsvMatchFile("/home/saurabhgiri/Project_Mountblue/ipl_project_saurabh/sources/matches.csv");
+       // deliveriesData = readCsvDeliveryFile("/home/saurabhgiri/Project_Mountblue/ipl_project_saurabh/sources/deliveries.csv");
+        matchesData = readMatchDataFromJDBC();
+        deliveriesData = readDeliveryDataFromJDBC();
 
-        assert matchesData != null;
+
+       // assert matchesData != null;
         findNoOfMatchsPlayedEachYear(matchesData);
         findNoOfMatchesWonByAllTeamOverAllYear(matchesData);
         findExtraRunConductedPerTeamIn2016(matchesData, deliveriesData);
@@ -56,6 +62,34 @@ public class Main {
         return null;
     }
 
+    public static ArrayList<Match> readMatchDataFromJDBC() {
+        ArrayList<Match> matchFileData = new ArrayList<>();
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/IPL", "postgres", "S@0916");
+            Statement s = con.createStatement();
+            ResultSet resultSet;
+            resultSet = s.executeQuery("select id, season, winner, venue from matches");
+            while (resultSet.next()) {
+                String season = resultSet.getString("season");
+                String id = resultSet.getString("id");
+                String winner = resultSet.getString("winner");
+                String venue = resultSet.getString("venue");
+                // System.out.println(season+" -> "+ id);
+                Match match = new Match();
+                match.setMatchIdFromMatch(id);
+                match.setSeason(season);
+                match.setWinner(winner);
+                match.setVenue(venue);
+                matchFileData.add(match);
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return matchFileData;
+    }
+
     public static ArrayList<Delivery> readCsvDeliveryFile(String path) {
         ArrayList<Delivery> rowLineOfFile = new ArrayList<>();
 
@@ -84,11 +118,43 @@ public class Main {
         return null;
     }
 
+    public static ArrayList<Delivery> readDeliveryDataFromJDBC() {
+        ArrayList<Delivery> deliveryFileData = new ArrayList<>();
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/IPL", "postgres", "S@0916");
+            Statement s = con.createStatement();
+            ResultSet resultSet;
+            resultSet = s.executeQuery("select match_id, batting_team, bowler, extra_runs, total_runs, fielder from deliveries");
+            while (resultSet.next()) {
+                String match_id = resultSet.getString("match_id");
+                String batting_team = resultSet.getString("batting_team");
+                String bowler = resultSet.getString("bowler");
+                String extra_runs = resultSet.getString("extra_runs");
+                String total_runs = resultSet.getString("total_runs");
+                String fielder = resultSet.getString("fielder");
+
+                Delivery deliveries = new Delivery();
+                deliveries.setMatchId(match_id);
+                deliveries.setBattingTeam(batting_team);
+                deliveries.setBowler(bowler);
+                deliveries.setExtraRun(extra_runs);
+                deliveries.setTotalRun(total_runs);
+                deliveries.setFielder(fielder);
+                deliveryFileData.add(deliveries);
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return deliveryFileData;
+    }
+
     public static void findNoOfMatchsPlayedEachYear(ArrayList<Match> matchListData) {
         Map<String, Integer> matchsPerYear = new TreeMap<>();
 
-        for (int i = 1; i < matchListData.size(); i++) {
-            matchsPerYear.put(matchListData.get(i).getSeason(), matchsPerYear.getOrDefault(matchListData.get(i).getSeason(), 0) + 1);
+        for (Match matchListDatum : matchListData) {
+            matchsPerYear.put(matchListDatum.getSeason(), matchsPerYear.getOrDefault(matchListDatum.getSeason(), 0) + 1);
         }
 
         for (Map.Entry<String, Integer> matchPerYear : matchsPerYear.entrySet()) {
@@ -99,9 +165,11 @@ public class Main {
     public static void findNoOfMatchesWonByAllTeamOverAllYear(ArrayList<Match> matchListData) {
         Map<String, Integer> noOfMatchesWinningAllTeam = new TreeMap<>();
 
-        for (int i = 1; i < matchListData.size(); i++) {
-            noOfMatchesWinningAllTeam.put(matchListData.get(i).getWinner(),
-                    noOfMatchesWinningAllTeam.getOrDefault(matchListData.get(i).getWinner(), 0) + 1);
+        for (Match matchListDatum : matchListData) {
+            if (matchListDatum.getWinner() != null) {
+                noOfMatchesWinningAllTeam.put(matchListDatum.getWinner(),
+                        noOfMatchesWinningAllTeam.getOrDefault(matchListDatum.getWinner(), 0) + 1);
+            }
         }
 
         for (Map.Entry<String, Integer> noOfMatchesWonPerTeam : noOfMatchesWinningAllTeam.entrySet()) {
@@ -112,15 +180,15 @@ public class Main {
     public static void findExtraRunConductedPerTeamIn2016(ArrayList<Match> matchListData, ArrayList<Delivery> deliveries) {
         Map<String, Integer> listOfExtraRunConductedPerTeam = new TreeMap<>();
 
-        for (int i = 1; i < matchListData.size(); i++) {
-            if (matchListData.get(i).getSeason().equals("2016")) {
-                String id_m = matchListData.get(i).getMatchIdFromMatch();
+        for (Match matchListDatum : matchListData) {
+            if (matchListDatum.getSeason().equals("2016")) {
+                String id_m = matchListDatum.getMatchIdFromMatch();
 
-                for (int j = 1; j < deliveries.size(); j++) {
-                    if (deliveries.get(j).getMatchId().equals(id_m)) {
-                        listOfExtraRunConductedPerTeam.put(deliveries.get(j).getBattingTeam(),
-                                listOfExtraRunConductedPerTeam.getOrDefault(deliveries.get(j).getBattingTeam(), 0) +
-                                        Integer.parseInt(deliveries.get(j).getExtraRun()));
+                for (Delivery delivery : deliveries) {
+                    if (delivery.getMatchId().equals(id_m)) {
+                        listOfExtraRunConductedPerTeam.put(delivery.getBattingTeam(),
+                                listOfExtraRunConductedPerTeam.getOrDefault(delivery.getBattingTeam(), 0) +
+                                        Integer.parseInt(delivery.getExtraRun()));
                     }
                 }
             }
@@ -134,8 +202,8 @@ public class Main {
     public static void findMatchInEveryVenue(ArrayList<Match> matchDataList) {
         Map<String, Integer> matchPerVenue = new TreeMap<>();
 
-        for (int i = 1; i < matchDataList.size(); i++) {
-            matchPerVenue.put(matchDataList.get(i).getVenue(), matchPerVenue.getOrDefault(matchDataList.get(i).getVenue(), 0) + 1);
+        for (Match match : matchDataList) {
+            matchPerVenue.put(match.getVenue(), matchPerVenue.getOrDefault(match.getVenue(), 0) + 1);
         }
 
         for (Map.Entry<String, Integer> matchInvenue : matchPerVenue.entrySet()) {
@@ -148,15 +216,15 @@ public class Main {
         Map<String, Integer> runsPerBowler = new TreeMap<>();
         Map<String, Double> economyPerBowler = new TreeMap<>();
 
-        for (int i = 1; i < matchDataList.size(); i++) {
-            if (matchDataList.get(i).getSeason().equals("2015")) {
-                String id_m = matchDataList.get(i).getMatchIdFromMatch();
+        for (Match match : matchDataList) {
+            if (match.getSeason().equals("2015")) {
+                String id_m = match.getMatchIdFromMatch();
 
-                for (int j = 1; j < deliveriesDataList.size(); j++) {
-                    if (deliveriesDataList.get(j).getMatchId().equals(id_m)) {
-                        ballsPerBowler.put(deliveriesDataList.get(j).getBowler(), ballsPerBowler.getOrDefault(deliveriesDataList.get(j).getBowler(), 0) + 1);
-                        runsPerBowler.put(deliveriesDataList.get(j).getBowler(), runsPerBowler.getOrDefault(deliveriesDataList.get(j).getBowler(), 0) +
-                                Integer.parseInt(deliveriesDataList.get(j).getTotalRun()));
+                for (Delivery delivery : deliveriesDataList) {
+                    if (delivery.getMatchId().equals(id_m)) {
+                        ballsPerBowler.put(delivery.getBowler(), ballsPerBowler.getOrDefault(delivery.getBowler(), 0) + 1);
+                        runsPerBowler.put(delivery.getBowler(), runsPerBowler.getOrDefault(delivery.getBowler(), 0) +
+                                Integer.parseInt(delivery.getTotalRun()));
                     }
                 }
             }
@@ -187,22 +255,22 @@ public class Main {
                 String id_m = match.getMatchIdFromMatch();
 
                 for (Delivery delivery : deliveriesDtatFile) {
-                    if (delivery.getMatchId().equals(id_m)) {
+                    if (delivery.getMatchId().equals(id_m) && delivery.getFielder()!=null) {
                         catchPerPlayer.put(delivery.getFielder(), catchPerPlayer.getOrDefault(delivery.getFielder(), 0) + 1);
                     }
                 }
             }
         }
 
-        int min_catch = 0;
+        int max_catch = 0;
         String nameOfPlayer = "";
 
         for (Map.Entry<String, Integer> itr : catchPerPlayer.entrySet()) {
-            if (min_catch < itr.getValue() && !itr.getKey().equals("")) {
-                min_catch = itr.getValue();
+            if (max_catch < itr.getValue() && !itr.getKey().equals("")) {
+                max_catch = itr.getValue();
                 nameOfPlayer = itr.getKey();
             }
         }
-        System.out.println(nameOfPlayer);
+        System.out.println(nameOfPlayer+" - "+ max_catch);
     }
 }

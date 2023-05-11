@@ -22,8 +22,8 @@ public class Main {
 
         ArrayList<Match> matchesData;
         ArrayList<Delivery> deliveriesData;
-       // matchesData = readCsvMatchFile("/home/saurabhgiri/Project_Mountblue/ipl_project_saurabh/sources/matches.csv");
-       // deliveriesData = readCsvDeliveryFile("/home/saurabhgiri/Project_Mountblue/ipl_project_saurabh/sources/deliveries.csv");
+        // matchesData = readCsvMatchFile("/home/saurabhgiri/Project_Mountblue/ipl_project_saurabh/sources/matches.csv");
+        // deliveriesData = readCsvDeliveryFile("/home/saurabhgiri/Project_Mountblue/ipl_project_saurabh/sources/deliveries.csv");
         matchesData = readMatchDataFromJDBC();
         deliveriesData = readDeliveryDataFromJDBC();
 
@@ -66,7 +66,7 @@ public class Main {
         ArrayList<Match> matchFileData = new ArrayList<>();
 
         try {
-            Class.forName("org.postgresql.Driver");
+            Class.forName("org.postgresql.Driver"); // load driver
             Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/IPL", "postgres", "S@0916");
             Statement s = con.createStatement();
             ResultSet resultSet;
